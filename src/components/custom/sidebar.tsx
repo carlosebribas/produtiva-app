@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -7,26 +8,35 @@ import {
   Settings,
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  Trash2,
+  Target,
+  MessageSquare,
+  FileText,
+  Plug
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
   open: boolean;
   onToggle: () => void;
+  onTrashClick?: () => void;
+  onTasksClick?: () => void;
 }
 
-export function Sidebar({ open, onToggle }: SidebarProps) {
-  const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", active: true },
-    { icon: CheckSquare, label: "Tarefas", active: false },
-    { icon: BarChart3, label: "Relatórios", active: false },
-    { icon: Settings, label: "Configurações", active: false },
-  ];
+export function Sidebar({ open, onToggle, onTrashClick, onTasksClick }: SidebarProps) {
+  const router = useRouter();
 
-  const handleMenuClick = (label: string) => {
-    alert(`Navegando para: ${label}`);
-  };
+  const menuItems = [
+    { icon: LayoutDashboard, label: "Dashboard", active: true, onClick: () => router.push("/") },
+    { icon: CheckSquare, label: "Tarefas", active: false, onClick: onTasksClick || (() => router.push("/")) },
+    { icon: Target, label: "KPIs", active: false, onClick: () => router.push("/kpis") },
+    { icon: MessageSquare, label: "Avaliações", active: false, onClick: () => router.push("/evaluations") },
+    { icon: FileText, label: "Relatórios", active: false, onClick: () => router.push("/reports") },
+    { icon: Plug, label: "Integrações", active: false, onClick: () => router.push("/integrations") },
+    { icon: Trash2, label: "Lixeira", active: false, onClick: onTrashClick },
+    { icon: Settings, label: "Configurações", active: false, onClick: () => router.push("/settings") },
+  ];
 
   return (
     <>
@@ -72,11 +82,11 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
           </div>
 
           {/* Menu Items */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {menuItems.map((item, index) => (
               <button
                 key={index}
-                onClick={() => handleMenuClick(item.label)}
+                onClick={item.onClick}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                   item.active
                     ? "bg-[#4CAF50] text-white shadow-lg shadow-[#4CAF50]/20"
@@ -92,7 +102,7 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
           {/* Footer */}
           <div className="p-4 border-t border-gray-800">
             <button 
-              onClick={() => alert('Perfil do usuário: João Silva')}
+              onClick={() => router.push("/settings")}
               className={`w-full flex items-center gap-3 hover:bg-gray-800 rounded-xl p-2 transition-all duration-300 ${!open && 'justify-center'}`}
             >
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4CAF50] to-[#45a049] flex items-center justify-center text-white font-bold">
